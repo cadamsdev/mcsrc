@@ -110,6 +110,11 @@ export function decompileEntireJar(jar: Jar, options?: DecompileEntireJarOptions
     };
 }
 
+export async function getCachedSources(entries: { className: ClassName; checksum: number }[]): Promise<(string | undefined)[]> {
+    const worker = await findWorker();
+    return await worker.getCachedSources(entries);
+}
+
 export async function decompileClass(className: ClassName, jar: Jar): Promise<DecompileResult> {
     const entry = jar.entries[toClassFilePath(className)];
 

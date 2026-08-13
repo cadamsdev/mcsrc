@@ -274,6 +274,12 @@ export class DecompileWorker {
         return res;
     }
 
+    getCachedSources = (entries: { className: ClassName; checksum: number }[]): Promise<(string | undefined)[]> => this.schedule(async () => {
+        const keys = entries.map(e => [e.className, e.checksum, "java"] as [string, number, string]);
+        const results = await this.db.results3.bulkGet(keys);
+        return results.map(r => r?.source);
+    });
+
     #indexer = new JarIndexer();
     getClassBytecode = (className: ClassName, checksum: number, classData: ArrayBufferLike[]): Promise<DecompileResult> => this.schedule(async () => {
         let result = await this.db.results3.get([className, checksum, "bytecode"]);
